@@ -2,7 +2,7 @@ from django.shortcuts import render
 from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework_simplejwt.authentication import JWTAuthentication
-
+from rest_framework.permissions import IsAuthenticated
 from .custompermissions import (AdminOnlyPermission, IsVendorOnly,
                                 ProductsImagePermission)
 from .models import *
@@ -58,7 +58,7 @@ class ProductViewSet(viewsets.ModelViewSet):
             sub = sub,
             vendor = vendor    
         )   
-        return Response({"msg": "Data created"})
+        return Response({"msg": "Product created"})
 
 # vendor can add multiple image for single product     
 class ImageViewSet(viewsets.ModelViewSet):
@@ -73,10 +73,8 @@ class ImageViewSet(viewsets.ModelViewSet):
     
     def create(self, request, *args, **kwargs):
         id = request.data.get("product")
-        image = request.data.getlist("image")
-        product = Product.objects.get(id=id)
-        
+        image = request.data.getlist("image")   
+        product = Product.objects.get(id=id)  
         for img in image:
             Image.objects.create(product = product, image = img)
-    
         return Response({"msg": "Image created"})

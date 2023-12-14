@@ -12,6 +12,6 @@ urlpatterns = [
     path('',include(router.urls)),
     path('customer/registration/', views.CustomerRegistrationView.as_view(), name='customer-registration'),
     path('vendor/annon/registration/', views.AnnonVendorRegistrationView.as_view(), name='anon-registration'),
-    path('jwt/token/', jwt_views.TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('token/jwt/', jwt_views.TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('token/refresh/', jwt_views.TokenRefreshView.as_view(), name='token_refresh'),
 ]

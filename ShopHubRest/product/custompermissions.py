@@ -21,10 +21,18 @@ class IsVendorOnly(BasePermission):
     
 class ProductsImagePermission(BasePermission):
     def has_permission(self, request, view):
-        try:       
-            if Product.objects.get(id=request.data.get('product'), vendor__user__username=request.user):
-                return True
-        except Exception as e:
-            return False
-        
+        if request.method=="POST":
+            try:
+                print("kjhgfd")    
+                if Product.objects.get(id = request.data.get('product'), vendor__user__username=request.user):
+                    return True
+            except Exception as e:
+                print("kjh")
+                return False
+        else:
+            return True        
 
+
+            
+        
+        

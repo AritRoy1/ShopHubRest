@@ -9,6 +9,7 @@ from customer.serializers import (CustomerSerializer,
                                   MultipleAddressSerializer, VendorSerializer,
                                   VendorSerializerForAnnon)
 from rest_framework import status
+import json
 
 ## customer registration 
 class CustomerRegistrationView(generics.CreateAPIView):
@@ -54,7 +55,7 @@ class VendorRegistrationView(ModelViewSet):
         )
         user.is_vendor = True
         user.save()
-        return Response({"msg": "Data created"}, status=status.HTTP_201_CREATED)
+        return Response({"msg": "Vendor created"}, status=status.HTTP_201_CREATED)
     
     
     
@@ -64,18 +65,25 @@ class AnnonVendorRegistrationView(generics.CreateAPIView):
     serializer_class = VendorSerializerForAnnon
     
     def create(self, serializer):
-        username = self.request.data.get('user.username')
-        first_name = self.request.data.get('user.first_name')
-        last_name = self.request.data.get('user.last_name')
-        email = self.request.data.get('user.email')
-        birth_date = self.request.data.get('user.birth_date')
-        phone_number = self.request.data.get('user.phone_number')
-        address = self.request.data.get('user.address')
-        city = self.request.data.get('user.city')
-        state = self.request.data.get('user.state')
-        zip_code = self.request.data.get('user.zip_code')
-        
-        user = User.objects.create(
+        print("Requested Data",self.request.data)
+        print(self.request.data)
+        val = self.request.data['user']
+        user=json.loads(val)
+ 
+       
+        username = user['username']
+        first_name = user['first_name'] 
+        last_name = user['last_name'] 
+        email = user['email']
+        birth_date = user['birth_date']
+        phone_number = user['phone_number']
+        address = user['address']
+        city = user['city']
+        state = user['state']
+        zip_code = user['zip_code']
+        print(zip_code)
+            
+        mainUser = User.objects.create(
             username = username,
             first_name=first_name,
             last_name = last_name,
@@ -88,13 +96,14 @@ class AnnonVendorRegistrationView(generics.CreateAPIView):
             zip_code = zip_code,
             is_vendor = True
         )
-        user.set_password(self.request.data.get('user.password'))
-        user.save() 
+        mainUser.set_password(user['password'])
+        mainUser.save() 
         aadhar_number = self.request.data.get('aadhar_number')
+        print(aadhar_number)
         ac_number = self.request.data.get('ac_number')
         gst = self.request.data.get('gst_invoice') 
         vendor = Vendor.objects.create(
-            user = user,
+            user = mainUser,
             aadhar_number = aadhar_number,
             ac_number = ac_number,
             gst_invoice = gst
@@ -116,14 +125,14 @@ class AddMultipleAddressViewSet(ModelViewSet):
        
     def create(self, request, *args, **kwargs):
         user = Customer.objects.get(username = self.request.user)   
-        name = request.POST.get('name')
-        phone = request.POST.get('phone_number')
-        locality = request.POST.get('locality')
-        pincode = request.POST.get('pincode')
-        address = request.POST.get('address')
-        city = request.POST.get('city')
-        state = request.POST.get('state')
-        landmark = request.POST.get('landmark')
+        name = request.data.get('name')
+        phone = request.data.get('phone_number')
+        locality = request.data.get('locality')
+        pincode = request.data.get('pincode')
+        address = request.data.get('address')
+        city = request.data.get('city')
+        state = request.data.get('state')
+        landmark = request.data.get('landmark')
         
         MultipleAddress.objects.create(
                 name = name,

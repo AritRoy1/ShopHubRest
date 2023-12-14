@@ -4,6 +4,13 @@ from customer.models import Customer, User, Vendor, MultipleAddress
 from rest_framework.validators import UniqueValidator
 from django.contrib.auth.password_validation import validate_password
 
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        # fields = "__all__"
+        fields = ['username', 'first_name', 'last_name', 'email', 'birth_date', 'phone_number', 'address', 'city', 'state', 'zip_code', 'password',]
+        # exclude = ['last_login', ]
+
 class CustomerSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(
             required=True,
@@ -79,7 +86,7 @@ class VendorSerializer(serializers.ModelSerializer):
             
     
 class VendorSerializerForAnnon(serializers.ModelSerializer):
-    user = CustomerSerializer()
+    user = UserSerializer()
     class Meta:
         model = Vendor
         fields  = ['user','aadhar_number', 'ac_number', 'gst_invoice' ]
